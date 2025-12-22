@@ -1,4 +1,20 @@
+<%@ page import="java.net.http.*,java.net.URI" %>
+<%@ page import="org.json.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%
+HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create("http://localhost:5002/api/inventory/all"))
+        .GET()
+        .build();
+
+HttpResponse<String> response =
+        client.send(request, HttpResponse.BodyHandlers.ofString());
+
+JSONArray products = new JSONArray(response.body());
+%>
+
 <html>
 <head>
     <title>E-Commerce Store</title>
@@ -9,9 +25,39 @@
     </style>
 </head>
 <body>
-<h1>Welcome to Our E-Commerce Store</h1>
-<p>Available Products: Laptop, Mouse, Keyboard, Monitor, Headphones</p>
+<h1>Product Catalog</h1>
+
+<form action="checkout.jsp" method="get">
+<table border="1">
+<tr>
+    <th>Select</th>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Available</th>
+</tr>
+
+<% for (int i = 0; i < products.length(); i++) {
+    JSONObject p = products.getJSONObject(i);
+%>
+<tr>
+    <td>
+        <input type="checkbox" name="product_id" value="<%=p.getInt("product_id")%>">
+        Qty:
+        <input type="number" name="qty_<%=p.getInt("product_id")%>" min="1">
+    </td>
+    <td><%=p.getString("product_name")%></td>
+    <td>$<%=p.getDouble("unit_price")%></td>
+    <td><%=p.getInt("quantity_available")%></td>
+</tr>
+<% } %>
+
+</table>
+<br>
+Customer ID:
+<input type="number" name="customer_id" required>
 <br><br>
-<a href="checkout.jsp" class="button">Proceed to Checkout</a>
+<input type="submit" value="Proceed to Checkout">
+</form>
+
 </body>
 </html>
