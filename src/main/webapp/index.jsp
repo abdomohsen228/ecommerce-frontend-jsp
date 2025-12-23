@@ -3,16 +3,30 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-HttpClient client = HttpClient.newHttpClient();
-HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create("http://localhost:5002/api/inventory/all"))
-        .GET()
-        .build();
+JSONArray products = new JSONArray();
+String errorMessage = null;
 
-HttpResponse<String> response =
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+try {
+    HttpClient client = HttpClient.newHttpClient();
+    HttpRequest httpRequest = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:5002/api/inventory/all"))
+            .GET()
+            .build();
 
-JSONArray products = new JSONArray(response.body());
+    HttpResponse<String> httpResponse =
+            client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+    if (httpResponse.statusCode() == 200) {
+        products = new JSONArray(httpResponse.body());
+    } else {
+        errorMessage = "Inventory Service Error: HTTP " + httpResponse.statusCode() + 
+                      ". Please ensure the Inventory Service is running on port 5002.";
+    }
+} catch (Exception e) {
+    errorMessage = "Cannot connect to Inventory Service (http://localhost:5002/api/inventory/all). " +
+                  "Error: " + e.getMessage() + 
+                  ". Please ensure the Inventory Service is running.";
+}
 %>
 
 <html>
@@ -27,6 +41,12 @@ JSONArray products = new JSONArray(response.body());
 <body>
 <h1>Product Catalog</h1>
 
+<% if (errorMessage != null) { %>
+<div style="background-color: #f8d7da; color: #721c24; padding: 15px; margin: 20px; border: 1px solid #f5c6cb; border-radius: 5px;">
+    <strong>Error:</strong> <%= errorMessage %>
+</div>
+<% } %>
+
 <form action="checkout.jsp" method="get">
 <table border="1">
 <tr>
@@ -36,8 +56,11 @@ JSONArray products = new JSONArray(response.body());
     <th>Available</th>
 </tr>
 
-<% for (int i = 0; i < products.length(); i++) {
-    JSONObject p = products.getJSONObject(i);
+<% if (products.length() == 0 && errorMessage == null) { %>
+<tr><td colspan="4" style="text-align: center; padding: 20px;">No products available</td></tr>
+<% } else {
+    for (int i = 0; i < products.length(); i++) {
+        JSONObject p = products.getJSONObject(i);
 %>
 <tr>
     <td>
@@ -49,7 +72,10 @@ JSONArray products = new JSONArray(response.body());
     <td>$<%=p.getDouble("unit_price")%></td>
     <td><%=p.getInt("quantity_available")%></td>
 </tr>
-<% } %>
+<% 
+    }
+} 
+%>
 
 </table>
 <br>

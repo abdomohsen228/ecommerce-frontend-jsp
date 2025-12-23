@@ -52,6 +52,11 @@ public class OrderServlet extends HttpServlet {
             HttpResponse<String> pricingResp =
                     client.send(pricingReq, HttpResponse.BodyHandlers.ofString());
 
+            if (pricingResp.statusCode() != 200) {
+                throw new IOException("Pricing Service returned HTTP " + pricingResp.statusCode() + 
+                                    ". Please ensure the Pricing Service is running on port 5003.");
+            }
+
             JSONObject pricing = new JSONObject(pricingResp.body());
             double total = pricing.getDouble("total");
 
@@ -69,6 +74,11 @@ public class OrderServlet extends HttpServlet {
 
             HttpResponse<String> orderResp =
                     client.send(orderReq, HttpResponse.BodyHandlers.ofString());
+
+            if (orderResp.statusCode() != 200) {
+                throw new IOException("Order Service returned HTTP " + orderResp.statusCode() + 
+                                    ". Please ensure the Order Service is running on port 5001.");
+            }
 
             req.setAttribute("orderResponse", orderResp.body());
 
