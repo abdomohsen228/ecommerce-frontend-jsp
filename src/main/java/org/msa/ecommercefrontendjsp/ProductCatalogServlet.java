@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ProductCatalogServlet extends HttpServlet {
 
     private final HttpClient client = HttpClient.newHttpClient();
+    // FIXED: Your backend returns the array directly, not wrapped in an object
     private static final String INVENTORY_SERVICE_URL = "http://localhost:5002/api/inventory/products";
 
     @Override
@@ -26,7 +27,6 @@ public class ProductCatalogServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            // Call Inventory Service to get all products with quantity > 0
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(INVENTORY_SERVICE_URL))
                     .header("Accept", "application/json")
@@ -37,8 +37,8 @@ public class ProductCatalogServlet extends HttpServlet {
                     client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
-                JSONObject jsonResponse = new JSONObject(response.body());
-                JSONArray products = jsonResponse.getJSONArray("products");
+                // FIXED: Your backend returns array directly [...]
+                JSONArray products = new JSONArray(response.body());
                 req.setAttribute("products", parseProducts(products));
 
             } else {
