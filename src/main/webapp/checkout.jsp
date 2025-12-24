@@ -83,32 +83,53 @@
     <div class="customer-info">
       <h2>Customer Information</h2>
       <p><strong>Customer ID:</strong> ${customerId}</p>
-      <div style="margin-top: 20px; padding: 16px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107;">
-        <i class="material-icons" style="vertical-align: middle; color: #f57c00;">warning</i>
-        <strong>Please review your order carefully before confirming.</strong>
+      <div style="margin-top: 20px; padding: 16px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107; display: flex; align-items: center; gap: 10px;">
+        <i class="material-icons" style="color: #f57c00; font-size: 24px;">warning</i>
+        <div>
+          <strong>Please review your order carefully before confirming.</strong>
+          <p style="margin: 8px 0 0 0; font-size: 13px; color: #856404;">Once confirmed, your order will be processed and cannot be cancelled.</p>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Action Buttons -->
   <div class="actions">
-    <form action="${pageContext.request.contextPath}/confirmOrder" method="post" style="display: inline;">
+    <form action="${pageContext.request.contextPath}/confirmOrder" method="post" style="display: inline;" id="confirmForm">
       <input type="hidden" name="customer_id" value="${customerId}">
       <input type="hidden" name="total_amount" value="${totalAmount}">
       <input type="hidden" name="products_json" value="${productsJson}">
 
-      <button type="submit" class="btn btn-success">
+      <button type="submit" class="btn btn-success" id="confirmBtn">
         <i class="material-icons" style="vertical-align: middle; font-size: 18px;">check_circle</i>
         Confirm Order
       </button>
     </form>
 
-    <a href="${pageContext.request.contextPath}/" class="btn btn-cancel">
+    <a href="${pageContext.request.contextPath}/" class="btn btn-cancel" id="cancelBtn">
       <i class="material-icons" style="vertical-align: middle; font-size: 18px;">cancel</i>
       Cancel
     </a>
   </div>
 </div>
+
+<script>
+(function() {
+    const confirmForm = document.getElementById('confirmForm');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    if (confirmForm) {
+        confirmForm.addEventListener('submit', function(e) {
+            // Show loading state
+            confirmBtn.disabled = true;
+            cancelBtn.style.pointerEvents = 'none';
+            cancelBtn.style.opacity = '0.6';
+            confirmBtn.innerHTML = '<i class="material-icons" style="vertical-align: middle; font-size: 18px;">hourglass_empty</i> Processing Order...';
+        });
+    }
+})();
+</script>
 
 </body>
 </html>
