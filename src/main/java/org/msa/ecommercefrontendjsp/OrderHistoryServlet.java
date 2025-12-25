@@ -84,7 +84,7 @@ public class OrderHistoryServlet extends HttpServlet {
                             details.setCustomerId(orderData.getInt("customer_id"));
                             details.setTotalAmount(orderData.getDouble("total_amount"));
                             details.setStatus(orderData.optString("status", "completed"));
-                            details.setTimestamp(orderData.optString("timestamp", "N/A"));
+                            details.setTimestamp(orderData.optString("created_at", "N/A"));
 
                             // Parse products
                             JSONArray products = orderData.optJSONArray("products");

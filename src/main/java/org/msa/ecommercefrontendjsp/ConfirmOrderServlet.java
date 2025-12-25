@@ -78,7 +78,7 @@ public class ConfirmOrderServlet extends HttpServlet {
 
                 if (loyaltyResponse.statusCode() == 200) {
                     JSONObject loyaltyData = new JSONObject(loyaltyResponse.body());
-                    int newLoyaltyPoints = loyaltyData.optInt("loyalty_points", 0);
+                    int newLoyaltyPoints = loyaltyData.optInt("points", 0);
                     req.setAttribute("loyaltyPointsEarned", loyaltyPointsEarned);
                     req.setAttribute("totalLoyaltyPoints", newLoyaltyPoints);
                 }
