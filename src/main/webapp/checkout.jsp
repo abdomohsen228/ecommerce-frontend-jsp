@@ -86,6 +86,7 @@
       <div style="margin-top: 20px; padding: 16px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107;">
         <i class="material-icons" style="vertical-align: middle; color: #f57c00;">warning</i>
         <strong>Please review your order carefully before confirming.</strong>
+
       </div>
     </div>
   </div>
@@ -95,7 +96,8 @@
     <form action="${pageContext.request.contextPath}/confirmOrder" method="post" style="display: inline;">
       <input type="hidden" name="customer_id" value="${customerId}">
       <input type="hidden" name="total_amount" value="${totalAmount}">
-      <input type="hidden" name="products_json" value="${productsJson}">
+      <input type="hidden" name="products_json" value='${productsJson}'>
+
 
       <button type="submit" class="btn btn-success">
         <i class="material-icons" style="vertical-align: middle; font-size: 18px;">check_circle</i>

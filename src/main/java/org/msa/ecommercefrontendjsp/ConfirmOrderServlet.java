@@ -50,7 +50,7 @@ public class ConfirmOrderServlet extends HttpServlet {
             HttpResponse<String> orderResponse =
                     client.send(orderRequest, HttpResponse.BodyHandlers.ofString());
 
-            if (orderResponse.statusCode() != 200) {
+            if (orderResponse.statusCode() != 200 && orderResponse.statusCode() != 201) {
                 throw new IOException("Order Service error: HTTP " + orderResponse.statusCode());
             }
 
